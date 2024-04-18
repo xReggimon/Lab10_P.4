@@ -3,63 +3,61 @@
 
 using namespace std;
 
+bool isCardValid(int digits[], int size);
+
 int main() {
 
+	int digits[8];
 
-	int value;
+	while (true) {
+		char input[10];
+		cout << "Enter 8-digit credit card # or Q to quit: ";
+		cin.getline(input, 10);
 
-	cout << "Please enter 8-digit card number or Q to quit: ";
-	cin >> value;
-
-	if (value < 0  ) {
-		return 1;
-	}
-	int sum1 = 0;
-	int sum2 = 0;
-	int digit;
-	int new_value = value;
-
-	bool is_even = false;
-
-		for (int i = 0; i < 8; ++i) {
-			digit = new_value % 10;
-			new_value /= 10;
-
-			if (i % 2 == 0) {
-
-				if (digit >= 10) {
-					digit = digit / 10 + digit % 10;
-
-				}
-				sum1 += digit;
-			}
-		} new_value = value;
-		for (int i = 0; i < 8; ++i) {
-			digit = new_value % 10;
-			new_value /= 10;
-
-			if (i % 2 != 0) {
-				digit *= 2;
-
-				if (digit >= 10) {
-					digit = digit / 10 + digit % 10;
-
-				}
-				sum2 += ((2 * digit) % 10) + ((2 * digit) % 100) / 10;
-			}
+		if (input[0] == 'Q' || input[0] == 'q') {
+			break;
 		}
-		cout << endl;
 
-		cout <<"Sum of every other digit from the right: " << sum1 << endl; 
-		cout <<"Every other number doubled and each placeholder added: " << sum2 << endl;
+		int value = atoi(input);
 
-		// Check if sum is divisible by 10 to be valid
-		if ((sum1 + sum2) % 10 == 0) {
-			cout << "Card is valid." << endl;
+		if (value < 0 || value > 99999999999) {
+			cout << "invalid input."; continue;
+		}
+		for (int i = 7; i >= 0; i--) {
+			digits[i] = value % 10;
+			value /= 10;
+		}
+
+		if (isCardValid(digits, 8)) {
+			cout << "Card is valid. " << endl;
 		}
 		else {
-			cout << "Card is not valid." << endl;
+			cout << "Card is not valid" << endl;
+		}
 	}
-		return 0;
+	return 0;
+}
 
+bool isCardValid(int digits[], int size) {
+	int sum1 = 0;
+	int sum2 = 0;
+	bool is_even = false;
+
+	for (int i = size - 1; i >= 0; i--) {
+		int digit = digits[i];
+
+		if (is_even) {
+			digit *= 2;
+			if (digit >= 10) {
+				digit = digit / 10 + digit % 10;
+			}
+			sum2 += digit;
+		}
+		else {
+			sum1 += digit;
+		}
+
+		is_even = !is_even;
+	}
+	return(sum1 + sum2) % 10 == 0;
 }
